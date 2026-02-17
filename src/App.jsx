@@ -1,35 +1,57 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+// COMPONENTE CARD
+function CastCard({ person }) {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="col">
+      <div className="card h-100 shadow">
+        <img src={person.image} className="card-img-top" alt={person.name} />
+
+        <div className="card-body d-flex flex-column">
+          <h5 className="card-title">{person.name}</h5>
+
+          <p className="card-text mb-1">
+            <strong>Anno:</strong> {person.birth_year}
+          </p>
+
+          <p className="card-text mb-1">
+            <strong>Nazionalità:</strong> {person.nationality}
+          </p>
+
+          <p className="card-text small flex-grow-1">{person.biography}</p>
+
+          <p className="card-text">
+            <strong>Riconoscimenti:</strong> {person.awards}
+          </p>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+// APP PRINCIPALE
+export default function App() {
+  const [cast, setCast] = useState([]);
+
+  useEffect(() => {
+    fetch("https://lanciweb.github.io/demo/api/actresses/")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Dati API:", data);
+        setCast(data);
+      })
+      .catch((err) => console.error("Errore:", err));
+  }, []);
+
+  return (
+    <div className="container py-4">
+      <h1 className="text-center mb-4">🎬 Cast Fetching</h1>
+
+      <div className="row row-cols-1 row-cols-md-3 g-4">
+        {cast.map((person) => (
+          <CastCard key={person.id} person={person} />
+        ))}
+      </div>
+    </div>
+  );
+}
